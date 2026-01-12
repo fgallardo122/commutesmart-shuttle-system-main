@@ -38,6 +38,45 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
   const scanInFlightRef = useRef(false);
   const lastDecodedRef = useRef<{ text: string; ts: number } | null>(null);
 
+  // Utility function to detect camera facing mode from camera device
+  const detectCameraFacingMode = useCallback((camera: CameraDevice): "environment" | "user" => {
+    const label = camera.label.toLowerCase();
+    
+    // Check for rear/back camera indicators
+    const isRearCamera = 
+      label.includes('back') || 
+      label.includes('rear') || 
+      label.includes('environment') ||
+      label.includes('后') || // Chinese for "rear"
+      label.includes('後'); // Traditional Chinese for "rear"
+    
+    if (isRearCamera) {
+      return "environment";
+    }
+    
+    // Check for front camera indicators
+    const isFrontCamera = 
+      label.includes('front') || 
+      label.includes('user') || 
+      label.includes('face') ||
+      label.includes('前'); // Chinese for "front"
+    
+    if (isFrontCamera) {
+      return "user";
+    }
+    
+    // Default to environment (rear) for unknown cameras
+    return "environment";
+  }, []);
+
+  // Utility function to find camera by desired facing mode
+  const findCameraByFacingMode = useCallback((cameras: CameraDevice[], desiredFacingMode: "environment" | "user"): CameraDevice | undefined => {
+    return cameras.find(camera => {
+      const detectedMode = detectCameraFacingMode(camera);
+      return detectedMode === desiredFacingMode;
+    });
+  }, [detectCameraFacingMode]);
+
   // 启动摄像头逻辑
   const startCamera = async () => {
     try {
@@ -257,11 +296,8 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
             // 如果我们是盲启（facingMode），尝试找到当前匹配的 deviceId 更新状态
             // 这里不做自动切换，只是为了让 UI 显示正确的设备名
             if (!currentCameraId) {
-               const backCamera = devices.find(d => 
-                d.label.toLowerCase().includes('back') || 
-                d.label.toLowerCase().includes('rear') ||
-                d.label.toLowerCase().includes('environment')
-              );
+              // 使用工具函数查找后置摄像头
+              const backCamera = findCameraByFacingMode(devices, "environment");
               if (backCamera) {
                 setCurrentCameraId(backCamera.id);
               } else {
@@ -277,7 +313,7 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
       setScanError(err.message || '无法启动扫码器，请检查摄像头权限');
       setScanStatus('idle');
     }
-  }, [handleScanSuccess, onScanFailure, cameras.length, currentCameraId]);
+  }, [handleScanSuccess, onScanFailure, cameras.length, currentCameraId, findCameraByFacingMode]);
 
   // 启动扫码 - 仅首次自动执行
   useEffect(() => {
@@ -306,23 +342,8 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
       // 如果我们有 device 列表，就走 deviceId 模式
       if (cameras.length > 1) {
         // 升级为 deviceId 模式
-        // 根据目标 facingMode 查找对应摄像头
-        let targetCamera;
-        if (nextFacingMode === "environment") {
-          // 切换到后置摄像头
-          targetCamera = cameras.find(c => 
-            c.label.toLowerCase().includes('back') || 
-            c.label.toLowerCase().includes('rear') ||
-            c.label.toLowerCase().includes('environment')
-          );
-        } else {
-          // 切换到前置摄像头
-          targetCamera = cameras.find(c => 
-            c.label.toLowerCase().includes('front') || 
-            c.label.toLowerCase().includes('user') ||
-            c.label.toLowerCase().includes('face')
-          );
-        }
+        // 使用工具函数查找对应摄像头
+        let targetCamera = findCameraByFacingMode(cameras, nextFacingMode);
         
         // 如果没找到特定摄像头，使用轮询方式
         if (!targetCamera) {
@@ -348,17 +369,14 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
         const nextIndex = (currentIndex + 1) % cameras.length;
         const nextCamera = cameras[nextIndex];
         
-        // 更新 facingMode 状态以匹配新摄像头
-        const newFacingMode = nextCamera.label.toLowerCase().includes('back') || 
-                              nextCamera.label.toLowerCase().includes('rear') ||
-                              nextCamera.label.toLowerCase().includes('environment') 
-                              ? "environment" : "user";
+        // 使用工具函数检测摄像头类型并更新状态
+        const newFacingMode = detectCameraFacingMode(nextCamera);
         setCurrentFacingMode(newFacingMode);
         setCurrentCameraId(nextCamera.id);
         startHtml5Qrcode(nextCamera.id);
       }
     }
-  }, [cameras, currentCameraId, usingFacingMode, currentFacingMode, startHtml5Qrcode]);
+  }, [cameras, currentCameraId, usingFacingMode, currentFacingMode, startHtml5Qrcode, findCameraByFacingMode, detectCameraFacingMode]);
 
   const handleScanSimulation = async () => {
     if (scanStatus !== 'scanning') return;
