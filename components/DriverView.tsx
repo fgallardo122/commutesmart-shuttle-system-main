@@ -306,13 +306,35 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
       // 如果我们有 device 列表，就走 deviceId 模式
       if (cameras.length > 1) {
         // 升级为 deviceId 模式
-        const currentIndex = cameras.findIndex(c => c.id === currentCameraId);
-        const nextIndex = (currentIndex + 1) % cameras.length;
-        const nextCamera = cameras[nextIndex];
+        // 根据目标 facingMode 查找对应摄像头
+        let targetCamera;
+        if (nextFacingMode === "environment") {
+          // 切换到后置摄像头
+          targetCamera = cameras.find(c => 
+            c.label.toLowerCase().includes('back') || 
+            c.label.toLowerCase().includes('rear') ||
+            c.label.toLowerCase().includes('environment')
+          );
+        } else {
+          // 切换到前置摄像头
+          targetCamera = cameras.find(c => 
+            c.label.toLowerCase().includes('front') || 
+            c.label.toLowerCase().includes('user') ||
+            c.label.toLowerCase().includes('face')
+          );
+        }
         
-        setCurrentCameraId(nextCamera.id);
+        // 如果没找到特定摄像头，使用轮询方式
+        if (!targetCamera) {
+          const currentIndex = cameras.findIndex(c => c.id === currentCameraId);
+          const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % cameras.length : 0;
+          targetCamera = cameras[nextIndex];
+        }
+        
+        setCurrentCameraId(targetCamera.id);
+        setCurrentFacingMode(nextFacingMode);
         setUsingFacingMode(false); // 切换到 deviceId 模式
-        startHtml5Qrcode(nextCamera.id); // 直接用 deviceId 重启
+        startHtml5Qrcode(targetCamera.id); // 直接用 deviceId 重启
       } else {
         // 如果没有列表（极少情况），使用 facingMode 切换
         // 实际上 html5-qrcode 在 Android 上对 environment/user 的支持好于 deviceId
@@ -326,6 +348,12 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
         const nextIndex = (currentIndex + 1) % cameras.length;
         const nextCamera = cameras[nextIndex];
         
+        // 更新 facingMode 状态以匹配新摄像头
+        const newFacingMode = nextCamera.label.toLowerCase().includes('back') || 
+                              nextCamera.label.toLowerCase().includes('rear') ||
+                              nextCamera.label.toLowerCase().includes('environment') 
+                              ? "environment" : "user";
+        setCurrentFacingMode(newFacingMode);
         setCurrentCameraId(nextCamera.id);
         startHtml5Qrcode(nextCamera.id);
       }
