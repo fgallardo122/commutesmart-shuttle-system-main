@@ -31,6 +31,7 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
   const [cameras, setCameras] = useState<CameraDevice[]>([]);
   const [currentCameraId, setCurrentCameraId] = useState<string | null>(null);
   const [usingFacingMode, setUsingFacingMode] = useState(true);
+  const [currentFacingMode, setCurrentFacingMode] = useState<"user" | "environment">("environment");
   const [scannerBoxSize, setScannerBoxSize] = useState(250);
   const scannerContainerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -286,6 +287,7 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
       const timer = setTimeout(() => {
         startHtml5Qrcode({ facingMode: "environment" });
         setUsingFacingMode(true);
+        setCurrentFacingMode("environment");
       }, 300);
       return () => clearTimeout(timer);
     }
@@ -299,9 +301,9 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
     // 策略1: 如果当前是用 facingMode 启动的，尝试反转 facingMode
     if (usingFacingMode) {
       // 停止当前
-      const nextFacingMode = "user"; // 简单反转逻辑：当前默认是 environment，切一下变成 user
-      // 注意：这里其实无法准确知道当前是 user 还是 environment，但通常默认起手是 environment
-      // 更稳妥的方式是：如果我们有 device 列表，就走 deviceId 模式
+      // 反转 facingMode：如果当前是 environment (后置)，切换到 user (前置)，反之亦然
+      const nextFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+      // 如果我们有 device 列表，就走 deviceId 模式
       if (cameras.length > 1) {
         // 升级为 deviceId 模式
         const currentIndex = cameras.findIndex(c => c.id === currentCameraId);
@@ -312,11 +314,10 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
         setUsingFacingMode(false); // 切换到 deviceId 模式
         startHtml5Qrcode(nextCamera.id); // 直接用 deviceId 重启
       } else {
-        // 如果没有列表（极少情况），尝试盲切 facingMode
+        // 如果没有列表（极少情况），使用 facingMode 切换
         // 实际上 html5-qrcode 在 Android 上对 environment/user 的支持好于 deviceId
-        // 但为了准确切换，我们还是依赖 deviceId 比较好。
-        // 这里保留一个兜底：重新用 environment 启动（相当于重试）
-        startHtml5Qrcode({ facingMode: "environment" });
+        setCurrentFacingMode(nextFacingMode);
+        startHtml5Qrcode({ facingMode: nextFacingMode });
       }
     } else {
       // 策略2: 已经是 deviceId 模式，继续轮询下一个 deviceId
@@ -329,7 +330,7 @@ const DriverView: React.FC<Props> = ({ state, viewMode = 'primary' }) => {
         startHtml5Qrcode(nextCamera.id);
       }
     }
-  }, [cameras, currentCameraId, usingFacingMode, startHtml5Qrcode]);
+  }, [cameras, currentCameraId, usingFacingMode, currentFacingMode, startHtml5Qrcode]);
 
   const handleScanSimulation = async () => {
     if (scanStatus !== 'scanning') return;
