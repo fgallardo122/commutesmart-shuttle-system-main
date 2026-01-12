@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CommuteSmart 智慧通勤系统 - 项目汇报</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --slate-50: #f8fafc;
+            --slate-900: #0f172a;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .nav-btn.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        .nav-btn:hover {
+            color: var(--primary);
+        }
+        .progress-bar {
+            transition: width 0.5s ease-out;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .print-break { page-break-before: always; }
+            body { font-size: 12px; }
+            .shadow-xl, .shadow-2xl { box-shadow: none !important; }
+            .card { border: 1px solid #e5e7eb; }
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                        <i class="fas fa-bus-alt"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-900 tracking-tight">CommuteSmart</span>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider">智慧通勤系统</p>
+                    </div>
+                </div>
+                <div class="flex space-x-1 overflow-x-auto scrollbar-hide">
+                    <button class="nav-btn active px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap" data-tab="overview">项目概览</button>
+                    <button class="nav-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap" data-tab="competitor">竞品分析</button>
+                    <button class="nav-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap" data-tab="architecture">功能架构</button>
+                    <button class="nav-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap" data-tab="tech">技术实现</button>
+                    <button class="nav-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap" data-tab="business">业务流程</button>
+                    <button class="nav-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap" data-tab="status">项目现状</button>
+                    <button class="nav-btn px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors whitespace-nowrap" data-tab="plan">后续规划</button>
+                </div>
+                <div class="flex items-center space-x-3 no-print">
+                    <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-sm font-medium transition-colors">
+                        <i class="fas fa-print mr-2"></i>导出PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Tab 1: 项目概览 -->
+            <section id="overview" class="tab-content active">
+                <!-- Cover -->
+                <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-3xl p-12 md:p-16 text-white mb-8 relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-10">
+                        <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                        <div class="absolute bottom-0 left-0 w-64 h-64 bg-amber-400 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center space-x-4 mb-6">
+                            <div class="w-16 h-16 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-3xl">
+                                <i class="fas fa-bus-alt"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-4xl md:text-5xl font-black tracking-tight">CommuteSmart</h1>
+                                <p class="text-blue-200 text-lg font-medium mt-1">智慧通勤管理系统</p>
+                            </div>
+                        </div>
+                        <p class="text-xl text-blue-100 max-w-2xl leading-relaxed mb-8">
+                            企业级班车服务平台，提供实时位置追踪、智能调度和安全核销功能，让员工通勤更安心、更高效。
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="bg-white/20 backdrop-blur px-6 py-3 rounded-xl flex items-center space-x-3">
+                                <i class="fas fa-map-marker-alt text-amber-400"></i>
+                                <span class="font-medium">实时追踪</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur px-6 py-3 rounded-xl flex items-center space-x-3">
+                                <i class="fas fa-qrcode text-emerald-400"></i>
+                                <span class="font-medium">动态核验</span>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur px-6 py-3 rounded-xl flex items-center space-x-3">
+                                <i class="fas fa-brain text-purple-400"></i>
+                                <span class="font-medium">AI调度</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Background & Pain Points -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+                        <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-600 mb-4">
+                            <i class="fas fa-exclamation-triangle text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">行业痛点</h3>
+                        <ul class="space-y-3 text-slate-600">
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-times text-red-400 mt-1"></i>
+                                <span>乘客无法得知班车实时位置，到站时间不可预测</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-times text-red-400 mt-1"></i>
+                                <span>纸质票/刷卡方式无法有效防止蹭车</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-times text-red-400 mt-1"></i>
+                                <span>调度全靠人工经验，缺乏数据支撑</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-times text-red-400 mt-1"></i>
+                                <span>运营数据统计滞后，决策缺乏依据</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-4">
+                            <i class="fas fa-lightbulb text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">解决方案</h3>
+                        <ul class="space-y-3 text-slate-600">
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-check text-emerald-500 mt-1"></i>
+                                <span>实时GPS追踪，乘客掌握出行时间</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-check text-emerald-500 mt-1"></i>
+                                <span>动态二维码核验，一人一码防蹭车</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-check text-emerald-500 mt-1"></i>
+                                <span>AI智能调度建议，优化运力分配</span>
+                            </li>
+                            <li class="flex items-start space-x-3">
+                                <i class="fas fa-check text-emerald-500 mt-1"></i>
+                                <span>全链路数据可视化，辅助管理决策</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Core Value -->
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 text-white">
+                    <h3 class="text-xl font-bold mb-6 text-center">核心价值主张</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-600/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-coins text-3xl text-blue-400"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">降本增效</h4>
+                            <p class="text-slate-400 text-sm">减少空驶率，优化运力分配，降低管理成本</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-emerald-600/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-heart text-3xl text-emerald-400"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">体验升级</h4>
+                            <p class="text-slate-400 text-sm">实时掌握时间，出行更安心，扫码即乘车</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-600/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-chart-line text-3xl text-purple-400"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">智能决策</h4>
+                            <p class="text-slate-400 text-sm">数据驱动调度，AI辅助决策，提升准点率</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 2: 竞品分析 -->
+            <section id="competitor" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900">市场竞品分析</h2>
+                    <p class="text-slate-500">国内外同类产品对比与差异化定位</p>
+                </div>
+
+                <!-- International Products -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fas fa-globe-americas text-blue-500 mr-2"></i>
+                        国际市场 - 班车/SaaS管理平台
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full bg-white rounded-xl shadow-sm border border-slate-100">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">产品名称</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">核心特点</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">目标客户</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">MoveInSync</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">AI驱动工作流，400+企业客户，100+财富500强</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">跨国企业</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">Wayleadr</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">访客+班车管理一体化</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">企业园区</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">Flexigo</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">企业班车SaaS解决方案</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">美国企业</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">TransLoc</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">固定路线+按需出行双模式</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">高校/园区</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">SHARE Mobility</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">车队管理+路线优化</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">企业</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 font-medium">Zoyride</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">自动化调度、预订管理</td>
+                                    <td class="px-4 py-3 text-sm text-slate-600">班车运营商</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Domestic Products -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fas fa-flag text-red-500 mr-2"></i>
+                        国内市场 - 企业出行平台
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center text-white font-bold">滴</div>
+                                <div>
+                                    <h4 class="font-bold">滴滴企业版</h4>
+                                    <p class="text-sm text-slate-500">"车-机-酒-火"一站式</p>
+                                </div>
+                            </div>
+                            <ul class="space-y-2 text-sm text-slate-600">
+                                <li>• 400+城市覆盖，1900万活跃司机</li>
+                                <li>• 企业出行+商旅全品类整合</li>
+                                <li>• 7×24小时客服支持</li>
+                                <li>• 费控报销无缝对接</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center text-white font-bold">美</div>
+                                <div>
+                                    <h4 class="font-bold">美团企业版</h4>
+                                    <p class="text-sm text-slate-500">企业消费全景解决方案</p>
+                                </div>
+                            </div>
+                            <ul class="space-y-2 text-sm text-slate-600">
+                                <li>• 餐饮+差旅+用车多品类聚合</li>
+                                <li>• 免垫付、免报销体验</li>
+                                <li>• 对接主流费控平台</li>
+                                <li>• 消费数据统一沉淀</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Matrix -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fas fa-table text-purple-500 mr-2"></i>
+                        功能对比矩阵
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full bg-white rounded-xl shadow-sm border border-slate-100 text-sm">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-slate-700">功能维度</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-slate-700 bg-blue-50 text-blue-700">CommuteSmart</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-slate-700">滴滴企业版</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-slate-700">MoveInSync</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="px-4 py-3">实时班车追踪</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                    <td class="px-4 py-3 text-center text-slate-400">—</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">动态二维码核验</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                    <td class="px-4 py-3 text-center text-slate-400">—</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">AI智能调度建议</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                    <td class="px-4 py-3 text-center text-slate-400">—</td>
+                                    <td class="px-4 py-3 text-center text-slate-400">—</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">多班车多线路</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-amber-500 font-bold">◐</span></td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">费控报销对接</td>
+                                    <td class="px-4 py-3 text-center text-slate-400">—</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                    <td class="px-4 py-3 text-center"><span class="text-amber-500 font-bold">◐</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">开源可定制</td>
+                                    <td class="px-4 py-3 text-center"><span class="text-emerald-500 font-bold">✓</span></td>
+                                    <td class="px-4 py-3 text-center text-slate-400">—</td>
+                                    <td class="px-4 py-3 text-center text-slate-400">—</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">部署方式</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">SaaS</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">SaaS</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">SaaS</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">✓ 完全支持 ◐ 部分支持 — 不适用</p>
+                </div>
+
+                <!-- Competitive Advantages -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
+                    <h3 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fas fa-star text-amber-500 mr-2"></i>
+                        CommuteSmart 差异化优势
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-xl p-6">
+                            <h4 class="font-bold text-blue-600 mb-3">1. 动态二维码核验</h4>
+                            <p class="text-sm text-slate-600">每3分钟自动刷新，一人一码防蹭车，对比多数竞品采用静态二维码或简单刷卡方式，具有显著安全优势。</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6">
+                            <h4 class="font-bold text-blue-600 mb-3">2. AI智能调度建议</h4>
+                            <p class="text-sm text-slate-600">集成Google Gemini API，基于历史数据自动生成调度建议，对比竞品多为人工分析或无此功能。</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6">
+                            <h4 class="font-bold text-blue-600 mb-3">3. 开源可定制</h4>
+                            <p class="text-sm text-slate-600">完整源代码开放，企业可根据需求深度定制，对比多数竞品为闭源商业软件，灵活性更强。</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6">
+                            <h4 class="font-bold text-blue-600 mb-3">4. 现代UI/UX设计</h4>
+                            <p class="text-sm text-slate-600">响应式设计，完美适配移动端，精心打磨的交互细节，对比传统B端软件忽视体验的通病。</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-4 bg-blue-600 rounded-xl text-white">
+                        <h4 class="font-bold mb-2">市场定位</h4>
+                        <p class="text-sm opacity-90">专注企业固定线路班车管理，定位于<strong>中小型企业/园区</strong>的轻量化解决方案，强调<strong>快速部署、成本可控、功能聚焦</strong>的核心优势。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 3: 功能架构 -->
+            <section id="architecture" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900">系统功能架构</h2>
+                    <p class="text-slate-500">清晰的层次结构与模块划分</p>
+                </div>
+
+                <!-- Architecture Diagram -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8">
+                    <h3 class="text-lg font-bold mb-6">系统架构图</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-center">
+                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-blue-200">
+                                <i class="fas fa-mobile-alt mr-2"></i>用户终端层 - 乘客端 / 司机端 / 管理端
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <i class="fas fa-chevron-down text-slate-300"></i>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <div class="bg-slate-800 text-white px-6 py-3 rounded-xl font-medium">
+                                <i class="fab fa-react mr-2"></i>前端架构层 - React 19 + Vite + TailwindCSS
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <i class="fas fa-chevron-down text-slate-300"></i>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <div class="bg-emerald-600 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-emerald-200">
+                                <i class="fas fa-server mr-2"></i>API网关层 - Vercel Functions (Serverless)
+                            </div>
+                        </div>
+                        <div class="flex justify-center">
+                            <i class="fas fa-chevron-down text-slate-300"></i>
+                        </div>
+                        <div class="flex items-center justify-center gap-4">
+                            <div class="bg-blue-600 text-white px-4 py-3 rounded-xl text-sm font-medium">
+                                <i class="fas fa-database mr-2"></i>Supabase PostgreSQL
+                            </div>
+                            <div class="bg-red-500 text-white px-4 py-3 rounded-xl text-sm font-medium">
+                                <i class="fas fa-bolt mr-2"></i>Vercel KV (Redis)
+                            </div>
+                            <div class="bg-purple-600 text-white px-4 py-3 rounded-xl text-sm font-medium">
+                                <i class="fas fa-brain mr-2"></i>Google Gemini AI
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Matrix -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold mb-4">用户角色与功能矩阵</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left font-semibold text-slate-700">功能模块</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-blue-600">乘客</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-emerald-600">司机</th>
+                                        <th class="px-3 py-2 text-center font-semibold text-purple-600">管理员</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="px-3 py-2">登录认证</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">乘车凭证</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">扫码核验</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">位置上报</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">实时定位</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">数据统计</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">AI调度建议</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2">用户管理</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-slate-300">—</td>
+                                        <td class="px-3 py-2 text-center text-emerald-500">✓</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold mb-4">技术栈一览</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-700 mb-2">前端</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">React 19.2</span>
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">TypeScript 5.8</span>
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">TailwindCSS 4</span>
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Vite 6</span>
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">Recharts 3.6</span>
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">qrcode.react 4.2</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-700 mb-2">后端</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">Vercel Functions</span>
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">Supabase</span>
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">PostgreSQL</span>
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">Redis KV</span>
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">JWT Auth</span>
+                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">Google Gemini</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-semibold text-slate-700 mb-2">基础设施</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">Vercel</span>
+                                    <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">GitHub</span>
+                                    <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">npm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature Screenshots Mockup -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold mb-6">核心功能界面</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-qrcode text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">乘客端 - 乘车凭证</h4>
+                            <p class="text-sm text-blue-100">动态二维码，每3分钟自动刷新，防止截图分享蹭车</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-6 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-map-marker-alt text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">乘客端 - 实时位置</h4>
+                            <p class="text-sm text-emerald-100">2秒轮询获取班车实时位置，掌握到站时间</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                                <i class="fas fa-chart-pie text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-lg mb-2">管理端 - 运营仪表盘</h4>
+                            <p class="text-sm text-purple-100">实时数据统计，AI调度建议，辅助管理决策</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 4: 技术实现 -->
+            <section id="tech" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900">核心技术实现</h2>
+                    <p class="text-slate-500">关键模块的技术方案与实现细节</p>
+                </div>
+
+                <!-- Core Features -->
+                <div class="space-y-6 mb-8">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 flex-shrink-0">
+                                <i class="fas fa-qrcode text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold mb-2">1. 动态二维码凭证系统</h3>
+                                <div class="bg-slate-50 rounded-lg p-4 font-mono text-sm">
+                                    <p class="text-slate-600 mb-2">• <strong>生成策略</strong>：每次请求生成唯一 UUID</p>
+                                    <p class="text-slate-600 mb-2">• <strong>有效期</strong>：180秒（3分钟）</p>
+                                    <p class="text-slate-600 mb-2">• <strong>刷新机制</strong>：前端自动轮询，剩余60秒时提前刷新</p>
+                                    <p class="text-slate-600 mb-2">• <strong>安全性</strong>：票据与用户绑定，核销后状态更新</p>
+                                    <p class="text-slate-600">• <strong>防复用</strong>：一经核销立即失效，不可重复使用</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 flex-shrink-0">
+                                <i class="fas fa-satellite-dish text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold mb-2">2. 实时位置追踪</h3>
+                                <div class="bg-slate-50 rounded-lg p-4 font-mono text-sm">
+                                    <p class="text-slate-600 mb-2">• <strong>轮询间隔</strong>：2秒</p>
+                                    <p class="text-slate-600 mb-2">• <strong>数据来源</strong>：司机端上报</p>
+                                    <p class="text-slate-600 mb-2">• <strong>存储方式</strong>：shuttle_status 表（支持 upsert）</p>
+                                    <p class="text-slate-600 mb-2">• <strong>缓存策略</strong>：1小时数据有效，超时自动清除</p>
+                                    <p class="text-slate-600">• <strong>数据字段</strong>：经纬度、速度、航向、当前站点、距下站距离</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 flex-shrink-0">
+                                <i class="fas fa-id-card text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold mb-2">3. JWT 认证体系</h3>
+                                <div class="bg-slate-50 rounded-lg p-4 font-mono text-sm">
+                                    <p class="text-slate-600 mb-2">• <strong>令牌类型</strong>：Bearer Token</p>
+                                    <p class="text-slate-600 mb-2">• <strong>有效期</strong>：24小时</p>
+                                    <p class="text-slate-600 mb-2">• <strong>角色识别</strong>：openid 前缀自动映射（admin_/driver_/默认乘客）</p>
+                                    <p class="text-slate-600 mb-2">• <strong>权限控制</strong>：API 级别中间件校验</p>
+                                    <p class="text-slate-600">• <strong>设备绑定</strong>：支持 device_id 更新追踪</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600 flex-shrink-0">
+                                <i class="fas fa-robot text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold mb-2">4. AI 智能调度建议</h3>
+                                <div class="bg-slate-50 rounded-lg p-4 font-mono text-sm">
+                                    <p class="text-slate-600 mb-2">• <strong>模型</strong>：Google Gemini 3 Flash Preview</p>
+                                    <p class="text-slate-600 mb-2">• <strong>输入</strong>：历史客流数据、时段满载率、排班信息</p>
+                                    <p class="text-slate-600 mb-2">• <strong>输出</strong>：JSON格式建议（标题、类型、描述）</p>
+                                    <p class="text-slate-600 mb-2">• <strong>建议类型</strong>：warning / success / info</p>
+                                    <p class="text-slate-600">• <strong>降级策略</strong>：无 API Key 时返回预设模拟数据</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Database Design -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 mb-8">
+                    <h3 class="text-lg font-bold mb-4">数据库设计</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-slate-700 mb-3">核心表结构</h4>
+                            <div class="space-y-3 font-mono text-sm">
+                                <div class="bg-slate-100 rounded-lg p-3">
+                                    <p class="font-bold text-blue-600">users（用户表）</p>
+                                    <p class="text-xs text-slate-500">id (UUID), openid, role, device_id, status</p>
+                                </div>
+                                <div class="bg-slate-100 rounded-lg p-3">
+                                    <p class="font-bold text-emerald-600">stops（站点表）</p>
+                                    <p class="text-xs text-slate-500">id, name, lat, lng, sequence</p>
+                                </div>
+                                <div class="bg-slate-100 rounded-lg p-3">
+                                    <p class="font-bold text-purple-600">tickets（票据表）</p>
+                                    <p class="text-xs text-slate-500">ticket_id, user_id, status, expires_at</p>
+                                </div>
+                                <div class="bg-slate-100 rounded-lg p-3">
+                                    <p class="font-bold text-amber-600">verification_logs（核销日志）</p>
+                                    <p class="text-xs text-slate-500">id, user_id, driver_id, shuttle_id, verified_at</p>
+                                </div>
+                                <div class="bg-slate-100 rounded-lg p-3">
+                                    <p class="font-bold text-red-600">shuttle_status（班车状态）</p>
+                                    <p class="text-xs text-slate-500">shuttle_id, data (JSONB), updated_at</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-slate-700 mb-3">数据关系</h4>
+                            <div class="bg-slate-50 rounded-lg p-4 h-full">
+                                <div class="space-y-2 text-sm">
+                                    <p class="flex items-center">
+                                        <span class="w-20 text-slate-500">users</span>
+                                        <span class="text-slate-400">──1:N──▶</span>
+                                        <span class="ml-2">tickets</span>
+                                    </p>
+                                    <p class="flex items-center">
+                                        <span class="w-20 text-slate-500">tickets</span>
+                                        <span class="text-slate-400">──N:1──▶</span>
+                                        <span class="ml-2">verification_logs</span>
+                                    </p>
+                                    <p class="flex items-center">
+                                        <span class="w-20 text-slate-500">verification_logs</span>
+                                        <span class="text-slate-400">──N:1──▶</span>
+                                        <span class="ml-2">users (driver)</span>
+                                    </p>
+                                    <p class="flex items-center">
+                                        <span class="w-20 text-slate-500">shuttle_status</span>
+                                        <span class="text-slate-400">──N:1──▶</span>
+                                        <span class="ml-2">班车位置</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API Endpoints -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold mb-4">API 端点速查</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left font-semibold text-slate-700">端点</th>
+                                    <th class="px-4 py-2 text-center font-semibold text-slate-700">方法</th>
+                                    <th class="px-4 py-2 text-center font-semibold text-slate-700">认证</th>
+                                    <th class="px-4 py-2 text-left font-semibold text-slate-700">说明</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/auth/login</td>
+                                    <td class="px-4 py-2 text-center">POST</td>
+                                    <td class="px-4 py-2 text-center text-slate-400">✗</td>
+                                    <td class="px-4 py-2">用户登录</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/auth/me</td>
+                                    <td class="px-4 py-2 text-center">GET</td>
+                                    <td class="px-4 py-2 text-center text-emerald-500">✓</td>
+                                    <td class="px-4 py-2">获取当前用户</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/stops</td>
+                                    <td class="px-4 py-2 text-center">GET</td>
+                                    <td class="px-4 py-2 text-center text-slate-400">✗</td>
+                                    <td class="px-4 py-2">站点列表</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/tickets/generate</td>
+                                    <td class="px-4 py-2 text-center">POST</td>
+                                    <td class="px-4 py-2 text-center text-emerald-500">✓</td>
+                                    <td class="px-4 py-2">生成凭证</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/tickets/verify</td>
+                                    <td class="px-4 py-2 text-center">POST</td>
+                                    <td class="px-4 py-2 text-center text-emerald-500">✓</td>
+                                    <td class="px-4 py-2">核销凭证</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/driver/location</td>
+                                    <td class="px-4 py-2 text-center">POST</td>
+                                    <td class="px-4 py-2 text-center text-emerald-500">✓</td>
+                                    <td class="px-4 py-2">上报位置</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/shuttle/status</td>
+                                    <td class="px-4 py-2 text-center">GET</td>
+                                    <td class="px-4 py-2 text-center text-slate-400">✗</td>
+                                    <td class="px-4 py-2">班车状态</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/admin/stats</td>
+                                    <td class="px-4 py-2 text-center">GET</td>
+                                    <td class="px-4 py-2 text-center text-emerald-500">✓</td>
+                                    <td class="px-4 py-2">统计数据</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/admin/ai-suggestions</td>
+                                    <td class="px-4 py-2 text-center">GET</td>
+                                    <td class="px-4 py-2 text-center text-emerald-500">✓</td>
+                                    <td class="px-4 py-2">AI调度建议</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2 font-mono text-blue-600">/api/health</td>
+                                    <td class="px-4 py-2 text-center">GET</td>
+                                    <td class="px-4 py-2 text-center text-slate-400">✗</td>
+                                    <td class="px-4 py-2">健康检查</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 5: 业务流程 -->
+            <section id="business" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900">业务流程详解</h2>
+                    <p class="text-slate-500">核心业务场景的完整流程</p>
+                </div>
+
+                <!-- Process 1 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8">
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center mr-3">1</span>
+                        乘客乘车全流程
+                    </h3>
+                    <div class="flex flex-wrap items-center justify-center gap-4 md:gap-8">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-sign-in-alt text-2xl text-blue-600"></i>
+                            </div>
+                            <p class="text-sm font-medium">乘客登录</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-qrcode text-2xl text-blue-600"></i>
+                            </div>
+                            <p class="text-sm font-medium">生成凭证</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-clock text-2xl text-blue-600"></i>
+                            </div>
+                            <p class="text-sm font-medium">等待班车</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-check-circle text-2xl text-blue-600"></i>
+                            </div>
+                            <p class="text-sm font-medium">扫码乘车</p>
+                        </div>
+                        <i class="fas fa-arrow-right text-slate-300 hidden md:block"></i>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-check-double text-2xl text-emerald-600"></i>
+                            </div>
+                            <p class="text-sm font-medium">完成乘车</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-slate-50 rounded-xl p-4">
+                        <h4 class="font-semibold text-slate-700 mb-3">详细步骤：</h4>
+                        <ol class="space-y-2 text-sm text-slate-600 list-decimal list-inside">
+                            <li>乘客通过 OpenID 登录系统</li>
+                            <li>前端调用 <code class="bg-white px-2 py-0.5 rounded text-blue-600">/api/tickets/generate</code> 生成动态二维码</li>
+                            <li>二维码有效期3分钟，前端自动轮询刷新</li>
+                            <li>每2秒轮询 <code class="bg-white px-2 py-0.5 rounded text-blue-600">/api/shuttle/status</code> 获取班车实时位置</li>
+                            <li>司机扫描乘客二维码，调用 <code class="bg-white px-2 py-0.5 rounded text-blue-600">/api/tickets/verify</code> 核销</li>
+                            <li>系统记录核销日志，更新票据状态</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Process 2 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8">
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="w-8 h-8 bg-emerald-600 text-white rounded-lg flex items-center justify-center mr-3">2</span>
+                        司机位置上报流程
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-slate-50 rounded-xl p-4">
+                            <h4 class="font-semibold text-slate-700 mb-2">驾驶中状态</h4>
+                            <p class="text-sm text-slate-600">司机登录后进入驾驶模式，开始上报位置</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4">
+                            <h4 class="font-semibold text-slate-700 mb-2">位置上报</h4>
+                            <p class="text-sm text-slate-600">调用 <code class="text-blue-600">POST /api/driver/location</code> 提交位置数据</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4">
+                            <h4 class="font-semibold text-slate-700 mb-2">数据存储</h4>
+                            <p class="text-sm text-slate-600">Supabase shuttle_status 表 upsert 更新</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-slate-900 rounded-xl p-4 font-mono text-sm text-emerald-400 overflow-x-auto">
+                        <p class="text-slate-500 mb-2">// 上报数据结构</p>
+                        <p>{</p>
+                        <p class="pl-4">"shuttleId": "default",</p>
+                        <p class="pl-4">"coords": { "lat": 24.5123, "lng": 118.1812 },</p>
+                        <p class="pl-4">"speed": 35,</p>
+                        <p class="pl-4">"heading": 90,</p>
+                        <p class="pl-4">"currentStopIndex": 1,</p>
+                        <p class="pl-4">"distToNext": 850</p>
+                        <p>}</p>
+                    </div>
+                </div>
+
+                <!-- Process 3 -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center mr-3">3</span>
+                        管理员运营流程
+                    </h3>
+                    <div class="grid md:grid-cols-4 gap-4 mb-6">
+                        <div class="text-center p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl text-white">
+                            <p class="text-3xl font-bold font-mono">156</p>
+                            <p class="text-sm opacity-80">今日乘车次数</p>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl text-white">
+                            <p class="text-3xl font-bold font-mono">98.5%</p>
+                            <p class="text-sm opacity-80">准点率</p>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl text-white">
+                            <p class="text-3xl font-bold font-mono">1</p>
+                            <p class="text-sm opacity-80">运营班车数</p>
+                        </div>
+                        <div class="text-center p-4 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl text-white">
+                            <p class="text-3xl font-bold font-mono">85</p>
+                            <p class="text-sm opacity-80">效率评分</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4">
+                        <h4 class="font-semibold text-slate-700 mb-3">AI 调度建议示例：</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                                <span class="text-sm text-amber-800">08:00-08:30 时段满载率达 112%，建议在 08:15 增开一班区间车</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                <i class="fas fa-exclamation-triangle text-amber-500"></i>
+                                <span class="text-sm text-amber-800">18:00 班次严重拥挤，建议将 19:00 班次提前至 18:10 发车</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                                <i class="fas fa-check-circle text-emerald-500"></i>
+                                <span class="text-sm text-emerald-800">平峰期运行准点率 100%，资源配置合理</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 6: 项目现状 -->
+            <section id="status" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900">项目现状评估</h2>
+                    <p class="text-slate-500">开发进度与质量指标</p>
+                </div>
+
+                <!-- Progress -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-8">
+                    <h3 class="text-lg font-bold mb-6">功能完成度</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">乘客端</span>
+                                <span class="text-emerald-600 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-emerald-500 h-4 rounded-full progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">司机端</span>
+                                <span class="text-emerald-600 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-emerald-500 h-4 rounded-full progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">管理端</span>
+                                <span class="text-emerald-600 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-emerald-500 h-4 rounded-full progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">后端 API</span>
+                                <span class="text-emerald-600 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-emerald-500 h-4 rounded-full progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">数据库</span>
+                                <span class="text-emerald-600 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-emerald-500 h-4 rounded-full progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">AI 集成</span>
+                                <span class="text-emerald-600 font-bold">100%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-emerald-500 h-4 rounded-full progress-bar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">单元测试</span>
+                                <span class="text-slate-400 font-bold">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-slate-300 h-4 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-medium">文档同步</span>
+                                <span class="text-amber-500 font-bold">60%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-4">
+                                <div class="bg-amber-500 h-4 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-blue-800">总体完成度</span>
+                            <span class="text-2xl font-bold text-blue-600">88%</span>
+                        </div>
+                        <div class="w-full bg-white rounded-full h-3 mt-2">
+                            <div class="bg-blue-600 h-3 rounded-full" style="width: 88%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quality Metrics -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold mb-4">优势项</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 p-3 bg-emerald-50 rounded-lg">
+                                <i class="fas fa-check-circle text-emerald-500"></i>
+                                <span class="text-sm">功能完整度优秀，核心业务流程闭环</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-emerald-50 rounded-lg">
+                                <i class="fas fa-check-circle text-emerald-500"></i>
+                                <span class="text-sm">代码质量良好，错误处理完善</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-emerald-50 rounded-lg">
+                                <i class="fas fa-check-circle text-emerald-500"></i>
+                                <span class="text-sm">UI/UX 设计精致，超越多数 B 端产品</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-emerald-50 rounded-lg">
+                                <i class="fas fa-check-circle text-emerald-500"></i>
+                                <span class="text-sm">技术选型现代，架构清晰</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold mb-4">改进空间</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
+                                <i class="fas fa-exclamation-circle text-amber-500"></i>
+                                <span class="text-sm">暂无单元测试覆盖</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
+                                <i class="fas fa-exclamation-circle text-amber-500"></i>
+                                <span class="text-sm">部分文档与代码不同步</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
+                                <i class="fas fa-exclamation-circle text-amber-500"></i>
+                                <span class="text-sm">可考虑 WebSocket 升级（当前为轮询）</span>
+                            </div>
+                            <div class="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg">
+                                <i class="fas fa-exclamation-circle text-amber-500"></i>
+                                <span class="text-sm">班车模拟器待完善</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Quality -->
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100">
+                    <h3 class="text-lg font-bold mb-6">代码质量指标</h3>
+                    <div class="grid md:grid-cols-4 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-xl">
+                            <div class="text-3xl font-bold text-blue-600">★★★★★</div>
+                            <p class="text-sm text-slate-600 mt-1">类型安全</p>
+                            <p class="text-xs text-slate-400">全程 TypeScript</p>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-xl">
+                            <div class="text-3xl font-bold text-blue-600">★★★★☆</div>
+                            <p class="text-sm text-slate-600 mt-1">错误处理</p>
+                            <p class="text-xs text-slate-400">完善的封装</p>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-xl">
+                            <div class="text-3xl font-bold text-blue-600">★★★★☆</div>
+                            <p class="text-sm text-slate-600 mt-1">API 设计</p>
+                            <p class="text-xs text-slate-400">RESTful 规范</p>
+                        </div>
+                        <div class="text-center p-4 bg-blue-50 rounded-xl">
+                            <div class="text-3xl font-bold text-blue-600">★★★★☆</div>
+                            <p class="text-sm text-slate-600 mt-1">安全机制</p>
+                            <p class="text-xs text-slate-400">JWT + 权限</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab 7: 后续规划 -->
+            <section id="plan" class="tab-content">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900">后续规划</h2>
+                    <p class="text-slate-500">技术演进路线与资源投入</p>
+                </div>
+
+                <!-- Roadmap -->
+                <div class="space-y-6 mb-8">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-l-4 border-l-blue-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold">短期优化（1-2个月）</h3>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">进行中</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
+                                <div>
+                                    <p class="font-medium">实时通信升级</p>
+                                    <p class="text-sm text-slate-500">轮询 → WebSocket，延迟从2秒降至毫秒级</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
+                                <div>
+                                    <p class="font-medium">班车模拟器完善</p>
+                                    <p class="text-sm text-slate-500">支持多班车线路模拟，可配置站点和时刻表</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
+                                <div>
+                                    <p class="font-medium">单元测试补充</p>
+                                    <p class="text-sm text-slate-500">核心 API 端点和关键组件测试</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</span>
+                                <div>
+                                    <p class="font-medium">文档同步更新</p>
+                                    <p class="text-sm text-slate-500">更新 README.md，补充 API 文档</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-l-4 border-l-emerald-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold">中期规划（3-6个月）</h3>
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">计划中</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">5</span>
+                                <div>
+                                    <p class="font-medium">多班车多线路支持</p>
+                                    <p class="text-sm text-slate-500">线路管理模块，班车切换功能，跨线路统计</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">6</span>
+                                <div>
+                                    <p class="font-medium">推送通知</p>
+                                    <p class="text-sm text-slate-500">班车即将到站提醒，候车人数异常预警</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">7</span>
+                                <div>
+                                    <p class="font-medium">离线支持</p>
+                                    <p class="text-sm text-slate-500">Service Worker 缓存，网络恢复后自动同步</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">8</span>
+                                <div>
+                                    <p class="font-medium">数据大屏</p>
+                                    <p class="text-sm text-slate-500">运营指挥中心可视化，热力图、满载率趋势</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 border-l-4 border-l-purple-500">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold">长期愿景（6-12个月）</h3>
+                            <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">愿景</span>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">9</span>
+                                <div>
+                                    <p class="font-medium">企业微信/钉钉集成</p>
+                                    <p class="text-sm text-slate-500">扫码登录，消息推送对接</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">10</span>
+                                <div>
+                                    <p class="font-medium">费控报销对接</p>
+                                    <p class="text-sm text-slate-500">导出乘车记录，对接主流费控系统</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">11</span>
+                                <div>
+                                    <p class="font-medium">预测性调度</p>
+                                    <p class="text-sm text-slate-500">基于历史数据的客流预测，主动运力调配</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <span class="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">12</span>
+                                <div>
+                                    <p class="font-medium">多租户 SaaS</p>
+                                    <p class="text-sm text-slate-500">独立部署能力，租户隔离机制</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resources -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold mb-4">人力投入估算（人月）</h3>
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-100">
+                                    <th class="py-2 text-left text-slate-600">阶段</th>
+                                    <th class="py-2 text-center text-slate-600">前端</th>
+                                    <th class="py-2 text-center text-slate-600">后端</th>
+                                    <th class="py-2 text-center text-slate-600">测试</th>
+                                    <th class="py-2 text-center text-slate-600">合计</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <tr>
+                                    <td class="py-2">MVP（已完成）</td>
+                                    <td class="py-2 text-center">1.5</td>
+                                    <td class="py-2 text-center">1.0</td>
+                                    <td class="py-2 text-center">0.5</td>
+                                    <td class="py-2 text-center font-bold">3.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">短期优化</td>
+                                    <td class="py-2 text-center">0.5</td>
+                                    <td class="py-2 text-center">0.5</td>
+                                    <td class="py-2 text-center">0.5</td>
+                                    <td class="py-2 text-center font-bold">1.5</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">中期规划</td>
+                                    <td class="py-2 text-center">1.5</td>
+                                    <td class="py-2 text-center">1.5</td>
+                                    <td class="py-2 text-center">1.0</td>
+                                    <td class="py-2 text-center font-bold">4.0</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">长期愿景</td>
+                                    <td class="py-2 text-center">2.0</td>
+                                    <td class="py-2 text-center">2.0</td>
+                                    <td class="py-2 text-center">1.5</td>
+                                    <td class="py-2 text-center font-bold">5.5</td>
+                                </tr>
+                                <tr class="bg-slate-50 font-bold">
+                                    <td class="py-2">总计</td>
+                                    <td class="py-2 text-center">5.5</td>
+                                    <td class="py-2 text-center">5.0</td>
+                                    <td class="py-2 text-center">3.5</td>
+                                    <td class="py-2 text-center">14.0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                        <h3 class="text-lg font-bold mb-4">运营成本（月）</h3>
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-100">
+                                    <th class="py-2 text-left text-slate-600">项目</th>
+                                    <th class="py-2 text-right text-slate-600">月成本</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <tr>
+                                    <td class="py-2">Vercel Pro</td>
+                                    <td class="py-2 text-right font-mono">¥300</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">Supabase Pro</td>
+                                    <td class="py-2 text-right font-mono">¥375</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">Vercel KV</td>
+                                    <td class="py-2 text-right font-mono">¥300</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">Gemini API</td>
+                                    <td class="py-2 text-right font-mono">¥150</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">域名+SSL</td>
+                                    <td class="py-2 text-right font-mono">¥10</td>
+                                </tr>
+                                <tr class="bg-slate-50 font-bold">
+                                    <td class="py-2">合计</td>
+                                    <td class="py-2 text-right text-emerald-600 font-mono">¥1,135/月</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-8 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-bus-alt"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold">CommuteSmart</span>
+                        <p class="text-xs text-slate-400">智慧通勤系统</p>
+                    </div>
+                </div>
+                <div class="text-sm text-slate-400">
+                    汇报人：<span id="reportor">系统开发组</span> | 汇报日期：2026年1月12日
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active from all buttons and contents
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active to clicked button and corresponding content
+                btn.classList.add('active');
+                const tabId = btn.dataset.tab;
+                document.getElementById(tabId)?.classList.add('active');
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.bg-white.rounded-2xl').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Print helper
+        function exportToPDF() {
+            window.print();
+        }
+
+        // Console info
+        console.log('%c CommuteSmart 智慧通勤系统 ', 'background: #2563eb; color: white; padding: 8px 16px; border-radius: 8px; font-size: 16px; font-weight: bold;');
+        console.log('%c 项目汇报文档已加载 ', 'color: #10b981; font-size: 12px;');
+    </script>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>智慧通勤班车系统｜领导汇报稿（基于源码）</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --card: #0f1b33;
+        --card2: #0b162c;
+        --text: #e6edf7;
+        --muted: #a9b6cc;
+        --line: rgba(230, 237, 247, 0.12);
+        --blue: #4f8cff;
+        --emerald: #18c08f;
+        --amber: #ffbf4a;
+        --rose: #ff5a7a;
+        --shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+        --radius: 18px;
+        --radius2: 24px;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", Arial, sans-serif;
+      }
+      html,
+      body {
+        height: 100%;
+        background: radial-gradient(1200px 800px at 20% 0%, rgba(79, 140, 255, 0.25), transparent 60%),
+          radial-gradient(900px 700px at 90% 10%, rgba(24, 192, 143, 0.18), transparent 55%),
+          radial-gradient(900px 700px at 80% 95%, rgba(255, 90, 122, 0.14), transparent 55%), var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        margin: 0;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 18px 64px;
+      }
+      .top {
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+      @media (max-width: 900px) {
+        .top {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--line);
+        border-radius: var(--radius2);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .hero {
+        padding: 22px 22px 18px;
+        position: relative;
+      }
+      .badgeRow {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .badge {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 7px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+      }
+      .badge.blue {
+        color: rgba(79, 140, 255, 0.95);
+        border-color: rgba(79, 140, 255, 0.4);
+        background: rgba(79, 140, 255, 0.12);
+      }
+      .badge.green {
+        color: rgba(24, 192, 143, 0.95);
+        border-color: rgba(24, 192, 143, 0.35);
+        background: rgba(24, 192, 143, 0.12);
+      }
+      .badge.amber {
+        color: rgba(255, 191, 74, 0.95);
+        border-color: rgba(255, 191, 74, 0.35);
+        background: rgba(255, 191, 74, 0.12);
+      }
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+      }
+      .subtitle {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 16px;
+      }
+      @media (max-width: 650px) {
+        .kpis {
+          grid-template-columns: 1fr;
+        }
+      }
+      .kpi {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px 12px 10px;
+      }
+      .kpi .label {
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+      .kpi .value {
+        margin-top: 8px;
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+      }
+      .kpi .desc {
+        margin-top: 6px;
+        color: rgba(230, 237, 247, 0.75);
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      .side {
+        padding: 18px 18px 16px;
+      }
+      .side h2 {
+        margin: 2px 0 10px;
+        font-size: 14px;
+        letter-spacing: 0.02em;
+      }
+      .list {
+        margin: 0;
+        padding-left: 18px;
+        color: rgba(230, 237, 247, 0.82);
+        font-size: 13px;
+        line-height: 1.7;
+      }
+      .mono {
+        font-family: var(--mono);
+        letter-spacing: 0;
+      }
+      .sections {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      @media (max-width: 900px) {
+        .sections {
+          grid-template-columns: 1fr;
+        }
+      }
+      .section {
+        padding: 18px;
+      }
+      .section h3 {
+        margin: 0 0 10px;
+        font-size: 15px;
+        letter-spacing: 0.01em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--blue);
+        box-shadow: 0 0 0 6px rgba(79, 140, 255, 0.12);
+      }
+      .dot.green {
+        background: var(--emerald);
+        box-shadow: 0 0 0 6px rgba(24, 192, 143, 0.12);
+      }
+      .dot.amber {
+        background: var(--amber);
+        box-shadow: 0 0 0 6px rgba(255, 191, 74, 0.12);
+      }
+      .dot.rose {
+        background: var(--rose);
+        box-shadow: 0 0 0 6px rgba(255, 90, 122, 0.12);
+      }
+      .pillRow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .pill {
+        font-size: 12px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        color: rgba(230, 237, 247, 0.82);
+      }
+      .grid1 {
+        margin-top: 18px;
+        display: grid;
+        gap: 18px;
+      }
+      .full {
+        padding: 18px;
+      }
+      .full h3 {
+        margin: 0 0 10px;
+        font-size: 16px;
+      }
+      .callout {
+        border: 1px solid rgba(79, 140, 255, 0.35);
+        background: rgba(79, 140, 255, 0.08);
+        border-radius: var(--radius);
+        padding: 12px 12px;
+        color: rgba(230, 237, 247, 0.9);
+        line-height: 1.75;
+        font-size: 13px;
+      }
+      .twoCol {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 900px) {
+        .twoCol {
+          grid-template-columns: 1fr;
+        }
+      }
+      .miniCard {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.03);
+        padding: 12px;
+      }
+      .miniCard .t {
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .miniCard .b {
+        font-size: 13px;
+        line-height: 1.7;
+        color: rgba(230, 237, 247, 0.86);
+      }
+      .flow {
+        margin-top: 12px;
+        display: grid;
+        gap: 10px;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 10px;
+        align-items: start;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 10px 10px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .step .n {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: rgba(24, 192, 143, 0.14);
+        border: 1px solid rgba(24, 192, 143, 0.35);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        color: rgba(24, 192, 143, 0.95);
+        font-family: var(--mono);
+      }
+      .step .c .h {
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.01em;
+      }
+      .step .c .p {
+        margin-top: 4px;
+        color: rgba(230, 237, 247, 0.82);
+        font-size: 12px;
+        line-height: 1.7;
+      }
+      .arch {
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.02);
+        padding: 10px;
+      }
+      .legend {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        color: rgba(230, 237, 247, 0.75);
+        font-size: 12px;
+      }
+      .legend span {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .sw {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+      }
+      .sw.blue {
+        background: var(--blue);
+      }
+      .sw.green {
+        background: var(--emerald);
+      }
+      .sw.amber {
+        background: var(--amber);
+      }
+      .sw.rose {
+        background: var(--rose);
+      }
+      details {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.02);
+        padding: 10px 12px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 900;
+        font-size: 13px;
+        outline: none;
+      }
+      details[open] summary {
+        margin-bottom: 8px;
+      }
+      .code {
+        font-family: var(--mono);
+        font-size: 11px;
+        line-height: 1.6;
+        color: rgba(230, 237, 247, 0.84);
+        white-space: pre-wrap;
+        word-break: break-word;
+        margin: 0;
+      }
+      .footer {
+        margin-top: 18px;
+        color: rgba(230, 237, 247, 0.5);
+        font-size: 12px;
+        line-height: 1.7;
+        text-align: center;
+      }
+      @media print {
+        body {
+          background: #ffffff;
+          color: #0b1220;
+        }
+        .card {
+          box-shadow: none;
+          border-color: rgba(0, 0, 0, 0.12);
+          background: #ffffff;
+        }
+        .badge,
+        .pill,
+        .miniCard,
+        .step,
+        details,
+        .arch {
+          border-color: rgba(0, 0, 0, 0.12);
+          background: #ffffff;
+        }
+        .subtitle,
+        .list,
+        .miniCard .t,
+        .miniCard .b,
+        .step .c .p,
+        .callout,
+        .legend,
+        .footer {
+          color: rgba(11, 18, 32, 0.8);
+        }
+        a {
+          text-decoration: underline;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="top">
+        <section class="card hero">
+          <div class="badgeRow">
+            <span class="badge blue">基于源码梳理</span>
+            <span class="badge green">三端角色：乘客 / 司机 / 管理</span>
+            <span class="badge amber">关键能力：动态票据 + 核销 + 实时位置</span>
+          </div>
+          <h1>智慧通勤班车管理系统（CommuteSmart）｜领导汇报稿</h1>
+          <div class="subtitle">
+            面向“两岸金融中心”通勤班车场景：用<strong>动态二维码</strong>替代纸质/静态码，司机端完成<strong>核销闭环</strong>，管理端获得<strong>实时统计与智能建议</strong>；并通过位置上报与轮询实现班车<strong>可视化追踪</strong>。
+            本报告内容来自项目源码：前端（React）+ 后端 API（Vercel Functions / Express）+ 数据库（Supabase/Postgres）实现。
+          </div>
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">乘客侧（H5）</div>
+              <div class="value">180 秒动态凭证</div>
+              <div class="desc">每 3 分钟自动刷新票据，降低截图复用风险，并减少人工核验。</div>
+            </div>
+            <div class="kpi">
+              <div class="label">司机侧（iPad）</div>
+              <div class="value">扫码核销闭环</div>
+              <div class="desc">核销成功写入日志，可统计“今日乘车次数”等运营指标。</div>
+            </div>
+            <div class="kpi">
+              <div class="label">管理侧（看板）</div>
+              <div class="value">实时统计 + AI建议</div>
+              <div class="desc">统计来自核销日志；AI 建议可接入 Gemini，未配置时回退内置建议。</div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card side">
+          <h2>本期可直接演示的“领导视角”价值</h2>
+          <ol class="list">
+            <li>从“验票”到“留痕”：每次乘车核销变成结构化数据，可统计可追溯。</li>
+            <li>从“等车焦虑”到“透明可见”：乘客看到车速、距离、下一站；司机看到站点动态。</li>
+            <li>从“经验调度”到“数据调度”：管理端按站点热度/核销趋势给出建议。</li>
+          </ol>
+          <div class="pillRow">
+            <span class="pill">登录后按角色切换界面</span>
+            <span class="pill">API 统一走 <span class="mono">/api</span></span>
+            <span class="pill">JWT 鉴权 + 角色权限</span>
+            <span class="pill">站点数据可从数据库读取</span>
+          </div>
+          <div style="height: 12px"></div>
+          <details>
+            <summary>一句话讲清楚（给外行）</summary>
+            <div class="subtitle" style="margin-top: 8px">
+              这是一个“班车通勤的数字化闭环系统”：乘客拿到随时间变化的乘车码，司机扫码确认并留下记录，管理者在看板里实时看到今天坐了多少人、哪里拥挤，并可获得调度建议。
+            </div>
+          </details>
+        </aside>
+      </div>
+
+      <div class="sections">
+        <section class="card section">
+          <h3><span class="dot"></span>面向的业务问题</h3>
+          <ul class="list">
+            <li>传统通勤：纸质登记/固定二维码易被转发、难追溯。</li>
+            <li>司机工作：人工核对慢，忙时容易漏登/错登。</li>
+            <li>管理调度：缺少实时数据，增开/调整班次主要靠经验。</li>
+            <li>乘客体验：不知道车在哪、何时到，等待不确定。</li>
+          </ul>
+        </section>
+
+        <section class="card section">
+          <h3><span class="dot green"></span>系统给出的解决方式</h3>
+          <ul class="list">
+            <li>动态票据：服务端生成带有效期的票据 ID，前端以二维码展示。</li>
+            <li>司机核销：核销接口验证“存在 / 未过期 / 未使用”，并写入核销日志。</li>
+            <li>实时位置：司机侧上报车辆坐标，乘客/司机侧按固定频率取回展示。</li>
+            <li>运营看板：管理员查看今日核销数、用户量、站点热度，并可一键生成 AI 建议。</li>
+          </ul>
+        </section>
+      </div>
+
+      <section class="card full grid1">
+        <div class="full">
+          <h3>核心业务流程（端到端）</h3>
+          <div class="callout">
+            下面 5 步是系统的主链路：每一步都能在源码中找到对应的前端调用与后端实现，形成“可演示、可统计、可追溯”的闭环。
+          </div>
+          <div class="flow">
+            <div class="step">
+              <div class="n">01</div>
+              <div class="c">
+                <div class="h">登录获得身份（JWT）</div>
+                <div class="p">
+                  前端调用 <span class="mono">POST /api/auth/login</span> 取得 token，存入本地存储；后端按 openid 前缀推导角色（原型做法），并签发 24h JWT。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="n">02</div>
+              <div class="c">
+                <div class="h">乘客生成动态票据并展示二维码</div>
+                <div class="p">
+                  前端每次调用 <span class="mono">POST /api/tickets/generate</span> 获取 <span class="mono">ticketId</span> 与有效期（180 秒），二维码内容即 ticketId。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="n">03</div>
+              <div class="c">
+                <div class="h">司机核销票据，形成可统计数据</div>
+                <div class="p">
+                  司机端调用 <span class="mono">POST /api/tickets/verify</span>；后端校验票据状态并更新为 USED，同时写 <span class="mono">verification_logs</span> 作为统计依据。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="n">04</div>
+              <div class="c">
+                <div class="h">车辆位置上报与乘客实时查看</div>
+                <div class="p">
+                  司机侧（或模拟脚本）调用 <span class="mono">POST /api/driver/location</span> 写入车辆状态；前端每 2 秒轮询 <span class="mono">GET /api/shuttle/status</span> 实时展示。
+                </div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="n">05</div>
+              <div class="c">
+                <div class="h">管理端统计与智能建议</div>
+                <div class="p">
+                  管理端读取 <span class="mono">GET /api/admin/stats</span>（今日核销数、乘客总数等）与 <span class="mono">GET /api/admin/ai-suggestions</span>（可接 Gemini 或使用内置建议）。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full grid1">
+        <div class="full">
+          <h3>技术架构（外行也能看懂的“分工图”）</h3>
+          <div class="arch">
+            <svg viewBox="0 0 980 340" width="100%" height="auto" role="img" aria-label="architecture">
+              <defs>
+                <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="rgba(79,140,255,0.22)" />
+                  <stop offset="1" stop-color="rgba(79,140,255,0.05)" />
+                </linearGradient>
+                <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="rgba(24,192,143,0.22)" />
+                  <stop offset="1" stop-color="rgba(24,192,143,0.05)" />
+                </linearGradient>
+                <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="rgba(255,191,74,0.22)" />
+                  <stop offset="1" stop-color="rgba(255,191,74,0.05)" />
+                </linearGradient>
+              </defs>
+
+              <rect x="18" y="22" width="300" height="290" rx="18" fill="url(#g1)" stroke="rgba(230,237,247,0.16)" />
+              <text x="38" y="58" font-size="16" font-weight="900" fill="rgba(230,237,247,0.95)">前端（一个 H5 应用）</text>
+              <text x="38" y="86" font-size="12" fill="rgba(230,237,247,0.75)">React + Tailwind UI</text>
+
+              <rect x="42" y="114" width="252" height="58" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="58" y="146" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">乘客端</text>
+              <text x="132" y="146" font-size="12" fill="rgba(230,237,247,0.75)">动态二维码 / 实时位置</text>
+
+              <rect x="42" y="182" width="252" height="58" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="58" y="214" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">司机端</text>
+              <text x="132" y="214" font-size="12" fill="rgba(230,237,247,0.75)">核销 / 站点动态 / 上报位置</text>
+
+              <rect x="42" y="250" width="252" height="44" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="58" y="278" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">管理端</text>
+              <text x="132" y="278" font-size="12" fill="rgba(230,237,247,0.75)">统计看板 / AI 建议</text>
+
+              <rect x="340" y="60" width="300" height="214" rx="18" fill="url(#g2)" stroke="rgba(230,237,247,0.16)" />
+              <text x="360" y="94" font-size="16" font-weight="900" fill="rgba(230,237,247,0.95)">后端（统一 API）</text>
+              <text x="360" y="122" font-size="12" fill="rgba(230,237,247,0.75)">路径统一为 /api/*，包含鉴权与业务逻辑</text>
+
+              <rect x="364" y="146" width="252" height="44" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="380" y="174" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">JWT 鉴权 + 角色权限</text>
+
+              <rect x="364" y="200" width="252" height="54" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="380" y="228" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">票据 / 核销 / 车辆状态 / 统计</text>
+              <text x="380" y="248" font-size="11" fill="rgba(230,237,247,0.72)">generate / verify / location / status / stats</text>
+
+              <rect x="662" y="22" width="300" height="290" rx="18" fill="url(#g3)" stroke="rgba(230,237,247,0.16)" />
+              <text x="682" y="58" font-size="16" font-weight="900" fill="rgba(230,237,247,0.95)">数据与外部能力</text>
+              <text x="682" y="86" font-size="12" fill="rgba(230,237,247,0.75)">用于存储、统计与智能建议</text>
+
+              <rect x="686" y="114" width="252" height="72" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="702" y="146" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">数据库（Supabase / Postgres）</text>
+              <text x="702" y="166" font-size="11" fill="rgba(230,237,247,0.72)">users / stops / tickets / verification_logs / shuttle_status</text>
+
+              <rect x="686" y="196" width="252" height="46" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="702" y="224" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">缓存/实时（可选）</text>
+              <text x="828" y="224" font-size="12" fill="rgba(230,237,247,0.72)">Redis / KV</text>
+
+              <rect x="686" y="252" width="252" height="46" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(230,237,247,0.12)" />
+              <text x="702" y="280" font-size="12" font-weight="800" fill="rgba(230,237,247,0.9)">AI（可选）</text>
+              <text x="770" y="280" font-size="12" fill="rgba(230,237,247,0.72)">Gemini（未配置则回退）</text>
+
+              <path d="M318 168 C 340 168, 330 168, 340 168" stroke="rgba(230,237,247,0.28)" stroke-width="2" fill="none" />
+              <path d="M318 168 C 360 168, 330 168, 340 168" stroke="rgba(230,237,247,0.28)" stroke-width="2" fill="none" />
+              <path d="M640 168 C 662 168, 650 168, 662 168" stroke="rgba(230,237,247,0.28)" stroke-width="2" fill="none" />
+              <path d="M640 168 C 682 168, 650 168, 662 168" stroke="rgba(230,237,247,0.28)" stroke-width="2" fill="none" />
+
+              <polygon points="338,162 350,168 338,174" fill="rgba(230,237,247,0.35)" />
+              <polygon points="662,162 674,168 662,174" fill="rgba(230,237,247,0.35)" />
+            </svg>
+            <div class="legend">
+              <span><span class="sw blue"></span>前端展示与交互（乘客/司机/管理）</span>
+              <span><span class="sw green"></span>后端统一 API（鉴权 + 业务）</span>
+              <span><span class="sw amber"></span>数据库与外部能力（统计/AI）</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full grid1">
+        <div class="full">
+          <h3>数据表与“可统计”的来源</h3>
+          <div class="twoCol">
+            <div class="miniCard">
+              <div class="t">最小核心表（已在 schema 中定义）</div>
+              <div class="b">
+                <div><span class="mono">users</span>：用户与角色（PASSENGER/DRIVER/ADMIN）</div>
+                <div><span class="mono">stops</span>：站点（名称、经纬度、顺序）</div>
+                <div><span class="mono">tickets</span>：动态票据（有效期、状态 VALID/USED）</div>
+                <div><span class="mono">verification_logs</span>：核销日志（统计“今日乘车次数”等）</div>
+                <div><span class="mono">shuttle_status</span>：车辆实时状态（坐标、速度、下一站距离等）</div>
+              </div>
+            </div>
+            <div class="miniCard">
+              <div class="t">扩展业务表（为“可运营/可排班”预留）</div>
+              <div class="b">
+                代码中已提供迁移脚本，包含：车辆 vehicles、司机 drivers、线路 routes、线路站点 route_stops、班次 schedules、行程 trips、事件 trip_events、节假日 holidays 等，为后续“按班次核销、按行程统计准点率”等能力打基础。
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full grid1">
+        <div class="full">
+          <h3>部署与运行方式（源码里实际存在两套后端）</h3>
+          <div class="twoCol">
+            <div class="miniCard">
+              <div class="t">方案 A：Vercel Functions + Supabase（推荐主线）</div>
+              <div class="b">
+                代码在 <span class="mono">api/</span> 目录下实现全部接口，使用 Supabase 管理数据，部署在 Vercel 时 <span class="mono">/api/*</span> 自动路由到函数。
+                适合“云端一体化、运维成本低、按需扩容”的目标。
+              </div>
+            </div>
+            <div class="miniCard">
+              <div class="t">方案 B：本地 Express + Postgres + Redis（原型/自托管可用）</div>
+              <div class="b">
+                <span class="mono">api-server.cjs</span> 提供同名 API，但落库与缓存使用 Postgres/Redis。
+                同时还有 <span class="mono">server.cjs</span> 尝试把 <span class="mono">api/*.ts</span> 处理器挂到 Express 并提供 dist 静态站点。
+              </div>
+            </div>
+          </div>
+          <div style="height: 12px"></div>
+          <details>
+            <summary>建议给领导的“统一口径”</summary>
+            <div class="subtitle" style="margin-top: 8px">
+              为避免“同名接口两套实现”带来的维护成本，建议明确主线：以 <span class="mono">api/</span>（Vercel Functions + Supabase）为唯一后端实现；本地 Express 仅作为开发辅助或未来自托管备选。
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="card full grid1">
+        <div class="full">
+          <h3>当前版本成熟度与注意事项（讲清楚“已做什么 / 还差什么”）</h3>
+          <div class="twoCol">
+            <div class="miniCard">
+              <div class="t">已完成（能跑起来、能演示）</div>
+              <div class="b">
+                <div>三端 UI：乘客/司机/管理三种界面与主流程</div>
+                <div>JWT 鉴权：乘客可生成票据；司机/管理员可核销与上报</div>
+                <div>核销落库：核销日志可用于统计</div>
+                <div>位置链路：上报接口 + 轮询展示 + 模拟脚本</div>
+                <div>AI 建议：有 key 调用 Gemini，无 key 回退内置建议</div>
+              </div>
+            </div>
+            <div class="miniCard">
+              <div class="t">需要补齐（从原型走向生产）</div>
+              <div class="b">
+                <div>登录对接真实身份体系（微信/企业账号），替换 openid 前缀推导角色</div>
+                <div>司机扫码：目前 UI 使用“摄像头 + 手动输入 ticketId”模拟，需要接入真实扫码库</div>
+                <div>实时推送：目前轮询 2 秒一次，后续可换 WebSocket 以降低延迟与流量</div>
+                <div>运营口径：准点率/满载率等目前为固定值或示例数据，需要接入行程与班次数据</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full grid1">
+        <div class="full">
+          <h3>关键源码定位（用于追溯“这不是 PPT，是能落地的代码”）</h3>
+          <div class="twoCol">
+            <details open>
+              <summary>前端入口与三端页面</summary>
+              <pre class="code">index.html             前端容器
+index.tsx              React 挂载入口
+App.tsx                登录入口 + 轮询车辆状态 + 切换三端视图
+components/PassengerView.tsx  动态二维码 + 乘客实时位置
+components/DriverView.tsx     核销入口 + 司机实时监控
+components/AdminView.tsx      统计看板 + AI 建议</pre>
+            </details>
+            <details open>
+              <summary>后端 API（/api）与数据结构</summary>
+              <pre class="code">api/auth/login.ts       登录与 JWT 签发
+api/tickets/generate.ts 生成动态票据（180 秒）
+api/tickets/verify.ts   核销票据 + 写核销日志
+api/driver/location.ts 司机上报车辆状态
+api/shuttle/status.ts   前端轮询获取车辆状态
+api/admin/stats.ts      管理端统计
+api/admin/ai-suggestions.ts  AI 建议（Gemini 可选）
+supabase-schema.sql     最小核心表结构
+migrations/001_add_core_business_tables.sql  扩展业务表</pre>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="card full grid1">
+        <div class="full">
+          <h3>下一步计划（给领导的“推进路线”）</h3>
+          <div class="twoCol">
+            <div class="miniCard">
+              <div class="t">短期（1～2 周内可见成果）</div>
+              <div class="b">
+                <div>接真实身份与权限：把“角色”从演示逻辑升级为组织账号体系</div>
+                <div>接真扫码：司机端摄像头识别二维码并自动调用核销接口</div>
+                <div>完善异常闭环：过期/重复/非本车次票据给出明确提示与记录</div>
+              </div>
+            </div>
+            <div class="miniCard">
+              <div class="t">中期（可运营）</div>
+              <div class="b">
+                <div>引入班次/行程：把核销关联到 trip，实现“每趟客流、准点率、满载率”</div>
+                <div>调度策略：站点热度驱动加班车/区间车，AI 输出可执行指令与预估收益</div>
+                <div>报表与审计：按天/周/月导出，满足管理与合规</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        生成时间：<span id="ts"></span> · 汇报稿基于项目源码自动梳理（非仅文档） · 文件可直接离线打开
+      </div>
+    </div>
+    <script>
+      (function () {
+        var el = document.getElementById("ts");
+        if (!el) return;
+        try {
+          var d = new Date();
+          var s =
+            d.getFullYear() +
+            "-" +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(d.getDate()).padStart(2, "0") +
+            " " +
+            String(d.getHours()).padStart(2, "0") +
+            ":" +
+            String(d.getMinutes()).padStart(2, "0");
+          el.textContent = s;
+        } catch {
+          el.textContent = "";
+        }
+      })();
+    </script>
+  </body>
+</html>

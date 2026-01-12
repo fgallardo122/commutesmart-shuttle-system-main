@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #1677ff;
+  --primary-bg: #e6f4ff;
+  --success: #52c41a;
+  --warning: #faad14;
+  --danger: #ff4d4f;
+  --text-main: #1f1f1f;
+  --text-sub: #8c8c8c;
+  --bg-light: #f5f7fa;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes scan-line {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+.animate-scan-line {
+  position: absolute;
+  width: 100%;
+  animation: scan-line 2.5s infinite linear;
+}
+
+@keyframes flash-green {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-flash-green {
+  animation: flash-green 0.5s ease-in-out;
+}
+
+@keyframes flash-red {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-flash-red {
+  animation: flash-red 0.5s ease-in-out;
+}
+
+.animate-in { animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.zoom-in { animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes zoomIn { from { transform: scale(0.8); } to { transform: scale(1); } }
+
+.zoom-in-95 { animation: zoomIn95 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes zoomIn95 { from { transform: scale(0.95); } to { transform: scale(1); } }
+
+.fade-in { animation: fadeIn 0.3s ease-out; }
+
+.slide-in-from-top-4 { animation: slideInFromTop4 0.3s ease-out; }
+@keyframes slideInFromTop4 { from { transform: translateY(-1rem); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.shake { animation: shake 0.4s ease-in-out; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-top { padding-top: env(safe-area-inset-top); }
+  
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #d9d9d9; border-radius: 10px; }
+
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { 
+  background: #d9d9d9; 
+  border-radius: 10px; 
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+  background: #b3b3b3; 
+}

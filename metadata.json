@@ -1,0 +1,10 @@
+
+{
+  "name": "CommuteSmart Shuttle System",
+  "description": "A comprehensive commuter shuttle management platform featuring dynamic passenger QR verification, real-time driver tracking with ETA, and administrative analytics.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
